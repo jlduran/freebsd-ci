@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JFLAG=${BUILDER_JFLAG}
+export JFLAG="${BUILDER_JFLAG}"
 export TARGET=i386
 export TARGET_ARCH=i386
 export WITH_LIB32=0

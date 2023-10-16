@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JFLAG=${BUILDER_JFLAG}
+export JFLAG="${BUILDER_JFLAG}"
 
 export TARGET=powerpc
 export TARGET_ARCH=powerpc64

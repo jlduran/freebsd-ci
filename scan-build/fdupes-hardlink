@@ -34,8 +34,8 @@ if [ -z "$dir" ] || [ ! -d "$dir" ]; then
 fi
 
 fdupes -1Hqr "$dir" | \
-while read f x; do
-  set -- $x
+while read -r f x; do
+  set -- "$x"
   echo "$f"
   for dupe; do
     echo "  <- $dupe"

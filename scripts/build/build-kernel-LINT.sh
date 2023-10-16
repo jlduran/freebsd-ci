@@ -8,27 +8,27 @@ SRCCONF=/dev/null
 
 KERNCONF=${KERNCONF:-LINT}
 
-cd ${WORKSPACE}/src/sys/${TARGET}/conf
+cd "${WORKSPACE}"/src/sys/"${TARGET}"/conf || exit
 make LINT
 
-cd ${WORKSPACE}/src
+cd "${WORKSPACE}"/src || exit
 
-make -j ${JFLAG} \
+make -j "${JFLAG}" \
 	-DNO_CLEAN \
-	TARGET=${TARGET} \
-	TARGET_ARCH=${TARGET_ARCH} \
+	TARGET="${TARGET}" \
+	TARGET_ARCH="${TARGET_ARCH}" \
 	kernel-toolchain \
-	KERNCONF=${KERNCONF} \
+	KERNCONF="${KERNCONF}" \
 	__MAKE_CONF=${MAKECONF} \
 	SRCCONF=${SRCCONF} \
-	${EXTRA_FLAGS}
+	"${EXTRA_FLAGS}"
 
-make -j ${JFLAG} \
+make -j "${JFLAG}" \
 	-DNO_CLEAN \
-	TARGET=${TARGET} \
-	TARGET_ARCH=${TARGET_ARCH} \
+	TARGET="${TARGET}" \
+	TARGET_ARCH="${TARGET_ARCH}" \
 	buildkernel \
-	KERNCONF=${KERNCONF} \
+	KERNCONF="${KERNCONF}" \
 	__MAKE_CONF=${MAKECONF} \
 	SRCCONF=${SRCCONF} \
-	${EXTRA_FLAGS}
+	"${EXTRA_FLAGS}"

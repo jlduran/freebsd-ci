@@ -25,23 +25,23 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-WORKDIR=`pwd -P`
+WORKDIR=$(pwd -P)
 
 SCAN_BUILD=/usr/local/bin/scan-build-devel
 
 SRCDIR=${WORKDIR}/src
-export OBJ=${WORKDIR}/obj
-export MAKEOBJDIRPREFIX=${OBJ}
+export OBJ="${WORKDIR}"/obj
+export MAKEOBJDIRPREFIX="${OBJ}"
 DEST=${WORKDIR}/clangScanBuildReports
 SRCCONF=${WORKDIR}/freebsd-ci/scan-build/src.conf
 XCC=/usr/local/llvm-devel/bin/clang
 XCXX=/usr/local/llvm-devel/bin/clang++
 XCPP=/usr/local/llvm-devel/bin/clang-cpp
-X_COMPILER_TYPE=clang
+export X_COMPILER_TYPE=clang
 MYFLAGS="__MAKE_CONF=/dev/null -m $SRCDIR/share/mk SRCCONF=${SRCCONF} -DMODULES_WITH_WORLD XCC=${XCC} XCXX=${XCXX} XCPP=${XCPP}"
 
-DATE=`date "+%Y-%m-%d"`
-ARCH=`uname -p`
+export DATE=$(date "+%Y-%m-%d")
+export ARCH=$(uname -p)
 JFLAG=-j4
 
 do_scan()
@@ -51,12 +51,12 @@ do_scan()
     ${SCAN_BUILD} \
         --use-cc ${XCC} \
         --use-c++ ${XCXX} \
-        -k -o $DEST $@
+        -k -o "$DEST" "$@"
 }
 
-echo "-=-> scan started at `date "+%Y-%m-%d %H:%M:%S"`"
+echo "-=-> scan started at $(date "+%Y-%m-%d %H:%M:%S")"
 
-cd $SRCDIR || exit 1
+cd "$SRCDIR" || exit 1
 rm -fr "$DEST"
 mkdir -p "$DEST"
 
@@ -74,4 +74,4 @@ EOF
 ) > Makefile.scanbuild
 
 do_scan make -f Makefile.scanbuild
-echo "-=-> scan finished at `date "+%Y-%m-%d %H:%M:%S"`"
+echo "-=-> scan finished at $(date "+%Y-%m-%d %H:%M:%S")"

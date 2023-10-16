@@ -6,7 +6,7 @@ WITH_LIB32=1
 WITH_DEBUG=1
 WITH_TESTS=1
 
-SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
+export SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
 
 set -ex
 
@@ -18,8 +18,8 @@ fi
 cleanup () {
 	# check mount point inside jail
 	P=${WORKSPACE}/work/ufs/dev
-	if [ `mount | grep ${P} | wc -l` -gt 0 ]; then
-		sudo umount ${P}
+	if [ "$(mount | grep -c "${P}")" -gt 0 ]; then
+		sudo umount "${P}"
 	fi
 }
 
@@ -52,8 +52,8 @@ fi
 mkdir -p ufs
 for f in ${DIST_PACKAGES}
 do
-	fetch https://${ARTIFACT_SERVER}/${ARTIFACT_SUBDIR}/${f}.txz
-	sudo tar Jxf ${f}.txz -C ufs
+	fetch https://"${ARTIFACT_SERVER}"/"${ARTIFACT_SUBDIR}"/"${f}".txz
+	sudo tar Jxf "${f}".txz -C ufs
 done
 
 sudo cp /etc/resolv.conf ufs/etc/
@@ -100,9 +100,9 @@ mkimg -s gpt -f raw \
 	-o ${OUTPUT_IMG_NAME}
 zstd --rm ${OUTPUT_IMG_NAME}
 
-cd ${WORKSPACE}
+cd "${WORKSPACE}"
 rm -fr artifact
-mkdir -p artifact/${ARTIFACT_SUBDIR}
-mv work/${OUTPUT_IMG_NAME}.zst artifact/${ARTIFACT_SUBDIR}
+mkdir -p artifact/"${ARTIFACT_SUBDIR}"
+mv work/${OUTPUT_IMG_NAME}.zst artifact/"${ARTIFACT_SUBDIR}"
 
-echo "USE_GIT_COMMIT=${GIT_COMMIT}" > ${WORKSPACE}/trigger.property
+echo "USE_GIT_COMMIT=${GIT_COMMIT}" > "${WORKSPACE}"/trigger.property

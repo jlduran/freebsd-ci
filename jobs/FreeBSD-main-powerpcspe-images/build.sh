@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
+export SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
 
 if [ -z "${GIT_COMMIT}" ]; then
 	echo "No git commit id specified"
@@ -16,12 +16,12 @@ ARTIFACT_SUBDIR=${BRANCH}/${GIT_COMMIT}/${TARGET}/${TARGET_ARCH}
 
 sudo rm -fr work
 mkdir -p work
-cd work
+cd work || exit
 
 mkdir -p ufs
 for f in base kernel base-dbg kernel-dbg tests
 do
-	fetch https://${ARTIFACT_SERVER}/snapshot/${ARTIFACT_SUBDIR}/${f}.txz
+	fetch https://"${ARTIFACT_SERVER}"/snapshot/"${ARTIFACT_SUBDIR}"/${f}.txz
 	sudo tar Jxf ${f}.txz -C ufs
 done
 
@@ -40,7 +40,7 @@ mkimg -a 1 -s gpt -f qcow2 \
 	-o disk.qcow2
 zstd --rm disk.qcow2
 
-cd ${WORKSPACE}
+cd "${WORKSPACE}" || exit
 rm -fr artifact
-mkdir -p artifact/${ARTIFACT_SUBDIR}
-mv work/disk.qcow2.zst artifact/${ARTIFACT_SUBDIR}
+mkdir -p artifact/"${ARTIFACT_SUBDIR}"
+mv work/disk.qcow2.zst artifact/"${ARTIFACT_SUBDIR}"

@@ -8,7 +8,7 @@ if [ $# -ne 2 ]; then
 	exit 1
 fi
 
-cat > $2 << END
+cat > "$2" << END
 <?xml version="1.0" encoding="iso-8859-1"?>
 <testsuite>
 <properties>
@@ -30,6 +30,6 @@ $2 ~ /CONF/ {
 
 ' >> "$2"
 
-cat >> $2 << END
+cat >> "$2" << END
 </testsuite>
 END

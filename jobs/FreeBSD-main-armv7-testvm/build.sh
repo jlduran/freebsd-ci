@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JFLAG=${BUILDER_JFLAG}
+export JFLAG="${BUILDER_JFLAG}"
 
 export TARGET=arm
 export TARGET_ARCH=armv7

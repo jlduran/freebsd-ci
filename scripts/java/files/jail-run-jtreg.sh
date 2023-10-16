@@ -38,7 +38,7 @@ fi
 HOME=/root
 
 
-cd $HOME
+cd $HOME || exit
 tar -xzf jtreg4.1-b10.tar.gz
 
 
@@ -49,20 +49,20 @@ export WORKDIR=/wrkdirs/usr/ports/java/openjdk8/work
 rm -rf $WORKDIR/jtreg-work
 rm -rf $WORKDIR/reports
 
-for PACKAGE in `echo $TESTS | tr ',' ' '`
+for PACKAGE in $(echo "$TESTS" | tr ',' ' ')
 do
-	echo $PACKAGE
+	echo "$PACKAGE"
 	$HOME/jtreg/linux/bin/jtreg \
 		-automatic \
 		-conc:4 \
 		-ea \
 		-xml \
-    	-jdk:$JAVA_HOME \
-    	-agentvm \
-    	-verbose:summary \
-    	-w $WORKDIR/jtreg-work/$PACKAGE \
-    	-r $WORKDIR/reports/$PACKAGE \
-    	$WORKDIR/openjdk/$PACKAGE/test 
+		-jdk:$JAVA_HOME \
+		-agentvm \
+		-verbose:summary \
+		-w $WORKDIR/jtreg-work/"$PACKAGE" \
+		-r $WORKDIR/reports/"$PACKAGE" \
+		$WORKDIR/openjdk/"$PACKAGE"/test
 	killall java
 	killall jstatd
 done
