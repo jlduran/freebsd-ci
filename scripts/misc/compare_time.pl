@@ -19,8 +19,8 @@ sub count {
 	%data;
 }
 
-open(my $f1, "<$ARGV[0]") or die;
-open(my $f2, "<$ARGV[1]") or die;
+open(my $f1, "<", "$ARGV[0]") or die;
+open(my $f2, "<", "$ARGV[1]") or die;
 
 my %data1 = count($f1);
 my %data2 = count($f2);
