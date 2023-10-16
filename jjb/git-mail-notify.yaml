@@ -1,3 +1,4 @@
+---
 # Failure
 - publisher:
     name: git-mail-notify-failure
@@ -61,14 +62,14 @@
             "Still Failing" - the build has not been fixed by the following changes and
                               this is a notification to note that these changes have
                               not been fully tested by the CI system
-            
+
             Change summaries:
             (Those commits are likely but not certainly responsible)
-            
+
             ${{CHANGES, format="%r by %a:\\n%m\\n"}}
-            
+
             The end of the build log:
-            
+
             ${{BUILD_LOG}}
           failure: true
           unstable: false
@@ -140,14 +141,14 @@
             "Still Unstable" - the failing test cases have not been fixed by these
                                following changes and this is a notification to note that
                                these changes have not been fully tested by the CI system
-            
+
             Change summaries:
             (Those commits are likely but not certainly responsible)
-            
+
             ${{CHANGES, format="%r by %a:\\n%m\\n"}}
-            
+
             The failed test cases:
-            
+
             ${{FAILED_TESTS, showStack="false", showMessage="true", maxTests=100}}
           failure: false
           unstable: true
@@ -163,7 +164,7 @@
       - git-mail-notify-fixed-custom:
           freebsd_mail_disable: false
           freebsd_send_to:
-            #- culprits
+            # - culprits
             - recipients
           freebsd_recipients: ${DEFAULT_RECIPIENTS}
 - publisher:
@@ -172,7 +173,7 @@
       - git-mail-notify-fixed-custom:
           freebsd_mail_disable: false
           freebsd_send_to:
-            #- culprits
+            # - culprits
             - recipients
           freebsd_recipients: ${DEFAULT_RECIPIENTS}, dev-ci@FreeBSD.org
 - publisher:
@@ -189,7 +190,7 @@
       - git-mail-notify-fixed-custom:
           freebsd_mail_disable: false
           freebsd_send_to:
-            #- culprits
+            # - culprits
             - recipients
           freebsd_recipients: ${DEFAULT_RECIPIENTS}, doceng@FreeBSD.org
 - publisher:
@@ -200,14 +201,14 @@
           subject: "$PROJECT_NAME - Build #$BUILD_NUMBER - $BUILD_STATUS"
           body: |
             $PROJECT_NAME - Build #$BUILD_NUMBER (${{ENV, var="GIT_COMMIT"}}) - $BUILD_STATUS
-            
+
             Build information: ${{BUILD_URL}}
             Full change log: ${{BUILD_URL}}changes
             Full build log: ${{BUILD_URL}}console
-            
+
             Change summaries:
             (Those commits are likely but not certainly responsible)
-            
+
             ${{CHANGES, format="%r by %a:\\n%m\\n"}}
           failure: false
           unstable: false

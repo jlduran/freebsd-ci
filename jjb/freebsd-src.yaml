@@ -1,3 +1,4 @@
+---
 - project:
     name: FreeBSD-main-amd64
     target_arch:
@@ -262,7 +263,7 @@
       - aarch64
       - amd64
       - i386
-# Add list of projects here.
+    # Add list of projects here.
     project: []
     jobs:
       - 'FreeBSD-srcproj-{project}-{target_arch}-ci':

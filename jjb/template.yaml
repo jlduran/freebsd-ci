@@ -1,3 +1,4 @@
+---
 # Main build. Build world sets and upload to the artifact server.
 - job-template:
     artifact_path: src/release/artifact
@@ -91,7 +92,7 @@
       - git-mail-notify-fixed-custom:
           freebsd_mail_disable: false
           freebsd_send_to:
-            #- culprits
+            # - culprits
             - recipients
           freebsd_recipients: ${{DEFAULT_RECIPIENTS}}
     wrappers:
@@ -115,8 +116,8 @@
     parameters:
       - USE_GIT_COMMIT
     properties:
-      #- build-discarder:
-      #    num-to-keep: 200
+      # - build-discarder:
+      #     num-to-keep: 200
       - inject:
           properties-content: |
             FBSD_BRANCH={branch}
