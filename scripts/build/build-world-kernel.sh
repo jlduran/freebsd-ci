@@ -31,9 +31,10 @@ sudo make -DNOPORTS -DNOSRC -DNODOC packagesystem \
 	MAKE="make __MAKE_CONF=${MAKECONF} SRCCONF=${SRCCONF}"
 
 ARTIFACT_DEST=artifact/${FBSD_BRANCH}/${GIT_COMMIT}/${TARGET}/${TARGET_ARCH}
-sudo mkdir -p ${ARTIFACT_DEST}
-sudo mv *.txz MANIFEST ${ARTIFACT_DEST}
+mkdir -p ${ARTIFACT_DEST}
+cp *.txz MANIFEST ${ARTIFACT_DEST}
+sudo rm -f *.txz MANIFEST
 
-echo "${GIT_COMMIT}" | sudo tee ${ARTIFACT_DEST}/revision.txt
+echo "${GIT_COMMIT}" | tee ${ARTIFACT_DEST}/revision.txt
 
 echo "USE_GIT_COMMIT=${GIT_COMMIT}" > ${WORKSPACE}/trigger.property
