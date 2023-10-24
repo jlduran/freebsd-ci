@@ -10,7 +10,7 @@ KERNCONF=${KERNCONF:-LINT}
 
 cd ${WORKSPACE}/src
 
-make -j ${JFLAG} \
+make -s -de -j ${JFLAG} \
 	-DNO_CLEAN \
 	TARGET=${TARGET} \
 	TARGET_ARCH=${TARGET_ARCH} \
@@ -20,7 +20,7 @@ make -j ${JFLAG} \
 	SRCCONF=${SRCCONF} \
 	${EXTRA_FLAGS}
 
-make -j ${JFLAG} \
+make -s -de -j ${JFLAG} \
 	-DNO_CLEAN \
 	TARGET=${TARGET} \
 	TARGET_ARCH=${TARGET_ARCH} \
