@@ -40,8 +40,8 @@ usage()
 # which will set the A and B variables
 for f in $@;
 do
-    if [ "$f" != ${f%%=*} ]; then
-        eval $f
+    if [ "$f" != "${f%%=*}" ]; then
+        eval "$f"
         shift
     fi
 done
@@ -51,25 +51,25 @@ if [ -z "${CONF}" -o ! -f "${CONF}" ]; then
     exit 1
 fi
 
-. ${CONF}
+. "${CONF}"
 
 
 echo "Stopping BHyve virtual machine named '$VM'"
 
 PIDFILE=/var/run/vmm/${VM}.pid
-if [ -f $PIDFILE ]; then
-    PID=`pgrep -F $PIDFILE bhyve 2> /dev/null`
+if [ -f "$PIDFILE" ]; then
+    PID=$(pgrep -F "$PIDFILE" bhyve 2> /dev/null)
 fi
 
 if [ -z "$PID" ]; then
     echo "${VM} is not running"
 fi
- 
+
 if [ -n "$PID" ]; then
     COUNT=0
-    kill $PID
+    kill "$PID"
     while [ $COUNT -lt 20 ] ; do
-        PID2=$(pgrep -F $PIDFILE bhyve 2> /dev/null) 
+        PID2=$(pgrep -F "$PIDFILE" bhyve 2> /dev/null)
         if [ -z "$PID2" ]; then
             break
         fi
@@ -77,10 +77,10 @@ if [ -n "$PID" ]; then
     done
 fi
 
-if [ -e /dev/vmm/${VM} ]; then
-    /usr/sbin/bhyvectl --vm=${VM} --destroy
+if [ -e /dev/vmm/"${VM}" ]; then
+    /usr/sbin/bhyvectl --vm="${VM}" --destroy
 fi
 
-rm -f $PIDFILE
+rm -f "$PIDFILE"
 
 exit 0

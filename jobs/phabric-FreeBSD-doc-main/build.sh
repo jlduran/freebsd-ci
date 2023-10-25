@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cd doc
+cd doc || exit
 make

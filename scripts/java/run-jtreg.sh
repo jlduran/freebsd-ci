@@ -37,7 +37,7 @@ while getopts "v:a:p:t:nk" opt; do
 	esac
 done
 
-usage() 
+usage()
 {
 	echo "Usage: $0 -v <version> -a <arch> -p <ports_tree> [-n] [-t <tests>]"
 	echo "	-v <version>	: the version should be in the form of svn branches: "
@@ -56,7 +56,7 @@ usage()
 }
 
 
-if [ -z "${VERSION}" -o -z "${ARCH}" -o -z "${PORTS_TREE}" ]; then
+if [ -z "${VERSION}" ] || [ -z "${ARCH}" ] || [ -z "${PORTS_TREE}" ]; then
 	usage
 fi
 
@@ -66,42 +66,42 @@ fi
 
 REQUIRED_PROG="poudriere sudo svn"
 for prog in ${REQUIRED_PROG}; do
-	if ! type $prog; then
+	if ! type "$prog"; then
 		exit 1
 	fi
 done
 
-JAIL_NAME=`echo ${VERSION}_${ARCH} |  tr "[a-z]/." "[A-Z]__"`
+JAIL_NAME=$(echo "${VERSION}"_"${ARCH}" |  tr "[a-z]/." "[A-Z]__")
 JAIL_PORT=${JAIL_NAME}-${PORTS_TREE}
-TMP_DIR=`pwd`
-JAVA_CI_DIR=`dirname $0`
+TMP_DIR=$(pwd)
+JAVA_CI_DIR=$(dirname "$0")
 
 
 if [ "${CLEANUP_FIRST}" == "yes" ]; then
 	echo "Cleaning up ${JAIL_PORT}"
-	sudo poudriere jail -k -j ${JAIL_NAME} -p ${PORTS_TREE}
+	sudo poudriere jail -k -j "${JAIL_NAME}" -p "${PORTS_TREE}"
 fi
 
 
-if [ -d /usr/local/poudriere/ports/${PORTS_TREE} ]; then
+if [ -d /usr/local/poudriere/ports/"${PORTS_TREE}" ]; then
 	echo "Updating ports tree ${PORTS_TREE}"
-	sudo poudriere ports -u -p ${PORTS_TREE} 
+	sudo poudriere ports -u -p "${PORTS_TREE}"
 else
 	echo "Fetching ports tree ${PORTS_TREE}"
-	sudo poudriere ports -c -p ${PORTS_TREE} -m svn+http
+	sudo poudriere ports -c -p "${PORTS_TREE}" -m svn+http
 fi
 
-if [ -d /usr/local/poudriere/jails/${JAIL_NAME} ]; then
-	INCOMING=`svn diff /usr/local/poudriere/jails/RELENG_10_1_AMD64/usr/src -r BASE:HEAD`
+if [ -d /usr/local/poudriere/jails/"${JAIL_NAME}" ]; then
+	INCOMING=$(svn diff /usr/local/poudriere/jails/RELENG_10_1_AMD64/usr/src -r BASE:HEAD)
 	if [ -z "$INCOMING" ]; then
 		echo "Skipping update to jail ${JAIL_NAME}, already up-to-date"
 	else
 		echo "Updating jail ${JAIL_NAME}"
-		sudo poudriere jails -u -j ${JAIL_NAME} -p ${PORTS_TREE} 
+		sudo poudriere jails -u -j "${JAIL_NAME}" -p "${PORTS_TREE}"
 	fi
 else
 	echo "Creating jail ${JAIL_NAME}"
-	sudo poudriere jails -c -j ${JAIL_NAME} -p ${PORTS_TREE} -m svn -v ${VERSION}
+	sudo poudriere jails -c -j "${JAIL_NAME}" -p "${PORTS_TREE}" -m svn -v "${VERSION}"
 fi
 
 
@@ -112,19 +112,19 @@ cd "${TMP_DIR}"
 
 
 echo "Building openjdk8 and dependencies in ${JAIL_PORT}"
-sudo poudriere testport -I  -j ${JAIL_NAME}  -p ${PORTS_TREE} -o java/openjdk8
+sudo poudriere testport -I  -j "${JAIL_NAME}"  -p "${PORTS_TREE}" -o java/openjdk8
 
 
 echo "Preparing ${JAIL_PORT} to run jtreg"
 fetch https://adopt-openjdk.ci.cloudbees.com/job/jtreg/lastStableBuild/artifact/jtreg4.1-b10.tar.gz
-sudo mv jtreg4.1-b10.tar.gz /usr/local/poudriere/data/build/${JAIL_PORT}/ref/root/
-sudo cp ${JAVA_CI_DIR}/files/jail-run-jtreg.sh ${JAVA_CI_DIR}/files/jail-merge-jtreg.sh /usr/local/poudriere/data/build/${JAIL_PORT}/ref/root/
+sudo mv jtreg4.1-b10.tar.gz /usr/local/poudriere/data/build/"${JAIL_PORT}"/ref/root/
+sudo cp "${JAVA_CI_DIR}"/files/jail-run-jtreg.sh "${JAVA_CI_DIR}"/files/jail-merge-jtreg.sh /usr/local/poudriere/data/build/"${JAIL_PORT}"/ref/root/
 
 echo "Running jtreg in ${JAIL_PORT} for $TESTS"
-sudo jexec ${JAIL_PORT} env -i TERM=${TERM} /root/jail-run-jtreg.sh -t $TESTS
+sudo jexec "${JAIL_PORT}" env -i TERM="${TERM}" /root/jail-run-jtreg.sh -t "$TESTS"
 
 echo "Copying jtreg results to ${TMP_DIR}"
-sudo cp -Rp /usr/local/poudriere/data/build/${JAIL_PORT}/ref/wrkdirs/usr/ports/java/openjdk8/work/jtreg-work /usr/local/poudriere/data/build/${JAIL_PORT}/ref/wrkdirs/usr/ports/java/openjdk8/work/reports "${TMP_DIR}"/
+sudo cp -Rp /usr/local/poudriere/data/build/"${JAIL_PORT}"/ref/wrkdirs/usr/ports/java/openjdk8/work/jtreg-work /usr/local/poudriere/data/build/"${JAIL_PORT}"/ref/wrkdirs/usr/ports/java/openjdk8/work/reports "${TMP_DIR}"/
 
 #echo "Merging jtreg results"
 #sudo jexec ${JAIL_PORT} env -i TERM=${TERM} /root/jail-merge-jtreg.sh -t $TESTS
@@ -132,5 +132,5 @@ sudo cp -Rp /usr/local/poudriere/data/build/${JAIL_PORT}/ref/wrkdirs/usr/ports/j
 
 if [ "${NO_CLEANUP}" != "yes" ]; then
 	echo "Cleaning up ${JAIL_PORT}"
-	sudo poudriere jail -k -j ${JAIL_NAME} -p ${PORTS_TREE}
+	sudo poudriere jail -k -j "${JAIL_NAME}" -p "${PORTS_TREE}"
 fi

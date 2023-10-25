@@ -1,7 +1,7 @@
 #!/bin/sh
 
 env \
-	JFLAG=${BUILDER_JFLAG} \
+	JFLAG="${BUILDER_JFLAG}" \
 	TARGET=i386 \
 	TARGET_ARCH=i386 \
 	WITH_LIB32=0 \

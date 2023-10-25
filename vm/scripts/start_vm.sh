@@ -38,8 +38,8 @@ usage()
 # which will set the A and B variables
 for f in $@;
 do
-    if [ "$f" != ${f%%=*} ]; then
-        eval $f
+    if [ "$f" != "${f%%=*}" ]; then
+        eval "$f"
         shift
     fi
 done
@@ -49,23 +49,23 @@ if [ -z "${CONF}" -o ! -f "${CONF}" ]; then
     exit 1
 fi
 
-. ${CONF}
+. "${CONF}"
 
 PIDFILE=/var/run/vmm/${VM}.pid
-if [ -f ${PIDFILE} ]; then
-    PID=$(pgrep -F $PIDFILE bhyve 2> /dev/null)
+if [ -f "${PIDFILE}" ]; then
+    PID=$(pgrep -F "$PIDFILE" bhyve 2> /dev/null)
     if [ -n "$PID" ]; then
         echo ""
         echo "${PIDFILE} exists.  Not starting ${VM}"
         echo ""
         exit 1
     else
-        rm -f ${PIDFILE}
+        rm -f "${PIDFILE}"
     fi
 fi
 
-if [ -e /dev/vmm/${VM} ]; then
-	/usr/sbin/bhyvectl --vm=${VM} --destroy
+if [ -e /dev/vmm/"${VM}" ]; then
+	/usr/sbin/bhyvectl --vm="${VM}" --destroy
 fi
     
 mkdir -p /var/run/vmm
@@ -74,7 +74,7 @@ while true
 do
     CONS_A=/dev/nmdm${VM}A
     CONS_B=${CONS_A%%A}B  
-    touch ${CONS_A}
+    touch "${CONS_A}"
     echo "Starting BHyve virtual machine named '${VM}'.  Use 'cu -l ${CONS_B}' to access console"
     cmd="/usr/sbin/bhyveload -m ${MEM} -d ${IMG} -c ${CONS_A} ${VM}"
     $cmd
@@ -83,16 +83,16 @@ do
         echo "[FAILED]: $cmd"
         exit $ret
     fi
-    ifconfig ${BRIDGE} up
-    touch ${CONS_A}
+    ifconfig "${BRIDGE}" up
+    touch "${CONS_A}"
     pidfile="/var/run/vmm/${VM}.pid"
     cmd="/usr/sbin/bhyve -c ${CPU} -m ${MEM} -A -H -P -g 0 -s 0:0,hostbridge -s 1:0,lpc -s 2:0,virtio-net,${TAP},mac=${MAC} -s 3:0,virtio-blk,${IMG} -l com1,${CONS_A} ${VM}"
     $cmd &
     cmd_pid="$!"
-    echo -n $cmd_pid > ${pidfile}
+    echo -n $cmd_pid > "${pidfile}"
     wait %1
     bhyve_status=$?
-    rm -f ${pidfile}
+    rm -f "${pidfile}"
     if [ $bhyve_status -ne 0 ]; then
         break
     fi

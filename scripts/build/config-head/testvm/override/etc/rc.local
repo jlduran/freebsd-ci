@@ -13,20 +13,20 @@ set -x
 ddb script kdb.enter.panic="show pcpu; reset"
 
 for TARDEV in /dev/vtbd0 /dev/vtbd1 /dev/ada0 /dev/ada1; do
-        ISTAR=$(file -s ${TARDEV} | grep "POSIX tar archive" | wc -l)
-        if [ ${ISTAR} -eq 1 ]; then
+	ISTAR=$(file -s ${TARDEV} | grep -c "POSIX tar archive")
+        if [ "${ISTAR}" -eq 1 ]; then
                 break
         fi
 done
 
 METADIR=/meta
 
-if [ ${ISTAR} -eq 1 ]; then
+if [ "${ISTAR}" -eq 1 ]; then
         rm -fr ${METADIR}
         mkdir -p ${METADIR}
-        tar xvf ${TARDEV} -C ${METADIR}
+        tar xvf "${TARDEV}" -C ${METADIR}
         sh -ex ${METADIR}/run.sh
-        tar cvf ${TARDEV} -C ${METADIR} .
+        tar cvf "${TARDEV}" -C ${METADIR} .
 else
 	echo "ERROR: no device with POSIX tar archive format found."
 	# Don't shutdown because this is not run in unattended mode

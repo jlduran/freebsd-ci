@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
+export SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
 
 set -ex
 
@@ -12,8 +12,8 @@ fi
 cleanup () {
 	# check mount point inside jail
 	P=${WORKSPACE}/work/ufs/dev
-	if [ `mount | grep ${P} | wc -l` -gt 0 ]; then
-		sudo umount ${P}
+	if [ "$(mount | grep -c "${P}")" -gt 0 ]; then
+		sudo umount "${P}"
 	fi
 }
 
@@ -22,7 +22,7 @@ trap cleanup EXIT
 KERNCONF=${KERNCONF:-GENERIC}
 ARTIFACT_SERVER=${ARTIFACT_SERVER:-artifact.ci.freebsd.org}
 ARTIFACT_SUBDIR=snapshot/${FBSD_BRANCH}/${GIT_COMMIT}/${TARGET}/${TARGET_ARCH}
-CONFIG_BASE=`dirname $0 | xargs realpath`/config-13
+CONFIG_BASE=$(dirname "$0" | xargs realpath)/config-13
 if [ "${KERNCONF}" = "GENERIC" ]; then
 	KERNEL=kernel
 	KERNEL_DBG=kernel-dbg
@@ -56,13 +56,13 @@ fi
 mkdir -p ufs
 for f in ${DIST_PACKAGES}
 do
-	fetch https://${ARTIFACT_SERVER}/${ARTIFACT_SUBDIR}/${f}.txz
-	sudo tar Jxf ${f}.txz -C ufs
+	fetch https://"${ARTIFACT_SERVER}"/"${ARTIFACT_SUBDIR}"/"${f}".txz
+	sudo tar Jxf "${f}".txz -C ufs
 done
 
 # Install packages in the target image.  We can only do it
 # if we can execute target architecture binaries.
-if [ "${TARGET}" = "amd64" -o "${TARGET}" = "i386" ]; then
+if [ "${TARGET}" = "amd64" ] || [ "${TARGET}" = "i386" ]; then
 	sudo cp /etc/resolv.conf ufs/etc/
 	sudo mount -t devfs devfs ufs/dev
 	sudo chroot ufs env ASSUME_ALWAYS_YES=yes pkg update
@@ -105,15 +105,15 @@ if [ "${TARGET}" = "amd64" -o "${TARGET}" = "i386" ]; then
 fi
 
 # copy default configs, existing files will be override
-sudo cp -Rf ${CONFIG_BASE}/testvm/override/ ufs/
+sudo cp -Rf "${CONFIG_BASE}"/testvm/override/ ufs/
 
 FROM=${CONFIG_BASE}/testvm/append/
 TO=ufs
-for i in `find ${FROM} -type f`
+for i in $(find "${FROM}" -type f)
 do
-	f=${i#${FROM}}
-	sudo mkdir -p ${TO}/`dirname $f`
-	cat ${FROM}$f | sudo tee -a ${TO}/$f > /dev/null
+	f=${i#"${FROM}"}
+	sudo mkdir -p ${TO}/"$(dirname "$f")"
+	cat "${FROM}""$f" | sudo tee -a ${TO}/"$f" > /dev/null
 done
 
 if [ "${TARGET}" = "powerpc" ]; then
@@ -147,7 +147,7 @@ case "${TARGET}" in
 			-p efi:=efi.img \
 			-p freebsd-swap/swapfs::1G \
 			-p freebsd-ufs/rootfs:=ufs.img \
-			-o ${OUTPUT_IMG_NAME}
+			-o "${OUTPUT_IMG_NAME}"
 		;;
 	arm)
 		mkdir -p efi/EFI/BOOT
@@ -157,10 +157,10 @@ case "${TARGET}" in
 			-p efi:=efi.img \
 			-p freebsd-swap/swapfs::1G \
 			-p freebsd-ufs/rootfs:=ufs.img \
-			-o ${OUTPUT_IMG_NAME}
+			-o "${OUTPUT_IMG_NAME}"
 		;;
 	mips)
-		mv ufs.img ${OUTPUT_IMG_NAME}
+		mv ufs.img "${OUTPUT_IMG_NAME}"
 		;;
 	powerpc)
 		# Note: BSD slices container is not working when cross created from amd64.
@@ -169,7 +169,7 @@ case "${TARGET}" in
 			-p prepboot:=ufs/boot/boot1.elf \
 			-p freebsd:=ufs.img \
 			-p freebsd::1G \
-			-o ${OUTPUT_IMG_NAME}
+			-o "${OUTPUT_IMG_NAME}"
 		;;
 	riscv)
 		mkdir -p efi/EFI/BOOT
@@ -179,7 +179,7 @@ case "${TARGET}" in
 			-p efi:=efi.img \
 			-p freebsd-swap/swapfs::1G \
 			-p freebsd-ufs/rootfs:=ufs.img \
-			-o ${OUTPUT_IMG_NAME}
+			-o "${OUTPUT_IMG_NAME}"
 		;;
 	*)
 		mkimg -s gpt -f raw \
@@ -187,15 +187,15 @@ case "${TARGET}" in
 			-p freebsd-boot/bootfs:=ufs/boot/gptboot \
 			-p freebsd-swap/swapfs::1G \
 			-p freebsd-ufs/rootfs:=ufs.img \
-			-o ${OUTPUT_IMG_NAME}
+			-o "${OUTPUT_IMG_NAME}"
 		;;
 esac
 
-zstd --rm ${OUTPUT_IMG_NAME}
+zstd --rm "${OUTPUT_IMG_NAME}"
 
-cd ${WORKSPACE}
+cd "${WORKSPACE}"
 rm -fr artifact
-mkdir -p artifact/${ARTIFACT_SUBDIR}
-mv work/${OUTPUT_IMG_NAME}.zst artifact/${ARTIFACT_SUBDIR}
+mkdir -p artifact/"${ARTIFACT_SUBDIR}"
+mv work/"${OUTPUT_IMG_NAME}".zst artifact/"${ARTIFACT_SUBDIR}"
 
-echo "USE_GIT_COMMIT=${GIT_COMMIT}" > ${WORKSPACE}/trigger.property
+echo "USE_GIT_COMMIT=${GIT_COMMIT}" > "${WORKSPACE}"/trigger.property

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JFLAG=${BUILDER_JFLAG}
+export JFLAG="${BUILDER_JFLAG}"
 
 export TARGET=mips
 export TARGET_ARCH=mips64

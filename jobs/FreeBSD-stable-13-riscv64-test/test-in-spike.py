@@ -5,10 +5,12 @@ import sys
 
 import pexpect
 
+
 def forsend(child, s):
     for c in s:
         child.send(c)
     child.sendline()
+
 
 cmd = "spike -m2048 -p2 ./bbl"
 child = pexpect.spawn(cmd)

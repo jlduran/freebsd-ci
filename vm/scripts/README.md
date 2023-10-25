@@ -1,6 +1,6 @@
-# BHyve startup scripts
+# bhyve startup scripts
 
-These scripts are used to start BSD Hypervisor (BHyve) VM's on boot.
+These scripts are used to start BSD Hypervisor (bhyve) VM's on boot.
 
 ## Setup
 
@@ -16,39 +16,38 @@ These scripts are used to start BSD Hypervisor (BHyve) VM's on boot.
 
 1. Put something like the following in /etc/rc.conf
 
-```
-    #####################################################
-    # List of bhyve vms
-    #####################################################
-    bhyvevm_enable="YES"
-    bhyvevm_list="jenkins10 jenkins9"
-    bhyvevm_jenkins10_conf="/vm/freebsd-ci/vm/10.0/jenkins10.conf"
-    bhyvevm_jenkins9_conf="/vm/freebsd-ci/vm/9.2/jenkins9.conf"
-```
+   ```conf
+   #####################################################
+   # List of bhyve vms
+   #####################################################
+   bhyvevm_enable="YES"
+   bhyvevm_list="jenkins14 jenkins13"
+   bhyvevm_jenkins14_conf="/vm/freebsd-ci/vm/14.0/jenkins14.conf"
+   bhyvevm_jenkins13_conf="/vm/freebsd-ci/vm/13.2/jenkins13.conf"
+   ```
 
 2. Add something like the following in /etc/rc.conf to enable the tap devices:
 
-```
-    #####################################################
-    # Create tap devices, one tap interface per BHyve VM.
-    # Add the tap interfaces to bridge0
-    ####################################################
-    cloned_interfaces="bridge0 tap0 tap1"
+   ```conf
+   #####################################################
+   # Create tap devices, one tap interface per bhyve VM.
+   # Add the tap interfaces to bridge0
+   ####################################################
+   cloned_interfaces="bridge0 tap0 tap1"
 
-    autobridge_interfaces="bridge0"
-    autobridge_bridge0="tap* igb0"
-```
-
+   autobridge_interfaces="bridge0"
+   autobridge_bridge0="tap* igb0"
+   ```
 
    Each VM should have a separate tap device, all connected to the same bridge.
    If you add more VM's, remember to add another tap device to cloned_interfaces
 
 3. Add the following to /etc/sysctl.conf on the host machine:
 
-```
-    # BHyve needs this for tap interfaces
+   ```conf
+    # bhyve needs this for tap interfaces
     net.link.tap.user_open=1
     net.link.tap.up_on_open=1
-```
+   ```
 
-   Refer to: http://www.freebsd.org/doc/handbook/network-bridging.html 
+   Refer to: <http://www.freebsd.org/doc/handbook/network-bridging.html>

@@ -31,7 +31,7 @@
 #
 
 from __future__ import print_function
-from optparse import OptionParser
+
 import atexit
 import getopt
 import json
@@ -45,13 +45,13 @@ sentinel_file = None
 temp_dir = None
 md = ""
 
+
 def usage(argv):
     print("Usage:")
     print("    %s -f [JSON config file]" % argv[0])
 
 
 def main(argv):
-
     try:
         opts, args = getopt.getopt(sys.argv[1:], "f:")
     except getopt.GetoptError as err:
@@ -78,7 +78,7 @@ def main(argv):
     test_config = json.load(config_file)
     config_file.close()
 
-    md = subprocess.check_output(["mdconfig", "-a", "-f", test_config['disks'][0]])
+    md = subprocess.check_output(["mdconfig", "-a", "-f", test_config["disks"][0]])
     md = md.strip()
     temp_dir = tempfile.mkdtemp()
     cmd = ["mount", "/dev/%s" % (md), temp_dir]
@@ -87,9 +87,9 @@ def main(argv):
     if ret != 0:
         sys.exit(ret)
 
-    cmd = "cp %s/usr/tests/*.xml %s/usr/tests/*.txt ." \
-           % (temp_dir, temp_dir)
+    cmd = "cp %s/usr/tests/*.xml %s/usr/tests/*.txt ." % (temp_dir, temp_dir)
     subprocess.call(cmd, shell=True)
+
 
 def cleanup():
     global md
@@ -102,6 +102,7 @@ def cleanup():
     cmd = ["mdconfig", "-d", "-u", md]
     print(" ".join(cmd))
     subprocess.call(cmd)
+
 
 if __name__ == "__main__":
     atexit.register(cleanup)

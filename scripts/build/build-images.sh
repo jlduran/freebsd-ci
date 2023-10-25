@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
+export SSL_CA_CERT_FILE=/usr/local/share/certs/ca-root-nss.crt
 
 set -ex
 
@@ -36,8 +36,8 @@ fi
 mkdir -p ufs
 for f in ${DIST_PACKAGES}
 do
-	fetch https://${ARTIFACT_SERVER}/snapshot/${ARTIFACT_SUBDIR}/${f}.txz
-	sudo tar Jxf ${f}.txz -C ufs
+	fetch https://"${ARTIFACT_SERVER}"/snapshot/"${ARTIFACT_SUBDIR}"/"${f}".txz
+	sudo tar Jxf "${f}".txz -C ufs
 done
 
 cat <<EOF | sudo tee ufs/etc/fstab
@@ -56,7 +56,7 @@ mkimg -s gpt -f raw \
 	-o ${OUTPUT_IMG_NAME}
 zstd --rm ${OUTPUT_IMG_NAME}
 
-cd ${WORKSPACE}
+cd "${WORKSPACE}"
 rm -fr artifact
-mkdir -p artifact/${ARTIFACT_SUBDIR}
-mv work/${OUTPUT_IMG_NAME}.zst artifact/${ARTIFACT_SUBDIR}
+mkdir -p artifact/"${ARTIFACT_SUBDIR}"
+mv work/${OUTPUT_IMG_NAME}.zst artifact/"${ARTIFACT_SUBDIR}"

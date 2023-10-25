@@ -1,3 +1,4 @@
+---
 - job:
     name: FreeBSD-doc-main
     defaults: global

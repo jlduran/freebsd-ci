@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export JFLAG=${BUILDER_JFLAG}
+export JFLAG="${BUILDER_JFLAG}"
 
 export TARGET=riscv
 export TARGET_ARCH=riscv64

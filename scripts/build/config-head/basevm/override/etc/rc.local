@@ -15,9 +15,9 @@ ddb script kdb.enter.panic="show pcpu; reset"
 TARDEV=/dev/vtbd1
 METADIR=/meta
 
-ISTAR=$(file -s ${TARDEV} | grep "POSIX tar archive" | wc -l)
+ISTAR=$(file -s ${TARDEV} | grep -c "POSIX tar archive")
 
-if [ ${ISTAR} -eq 1 ]; then
+if [ "${ISTAR}" -eq 1 ]; then
         rm -fr ${METADIR}
         mkdir -p ${METADIR}
         tar xvf ${TARDEV} -C ${METADIR}
